@@ -91,6 +91,11 @@ app.use((err, req, res, next) => {
   res.render("listings/error.ejs", { message });
 });
 
+app.use((req, res, next) => {
+  res.locals.CurrentUser = req.user;
+  next();
+});
+
 app.listen(8080, () => {
   console.log("Server is listening to 8080!");
 });
