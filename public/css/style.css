@@ -10,6 +10,8 @@ body {
                 flex: 1;
 }
 
+ 
+
 .show-img {
                 height: 30vh;
 }
@@ -34,7 +36,7 @@ body {
                 background-color: white;
 }
 
-.card {
+.listing-card {
                 border: none !important;
                 margin-bottom: 2rem;
 }
@@ -98,6 +100,6 @@ footer {
 
 .add-btn {
                 background-color: #f13636 !important;
-               color: #f8f9fa !important;
+                color: #f8f9fa !important;
                 border: none !important;
 }

@@ -1,11 +1,10 @@
 <% layout("/layout/boilerplate") -%>
-
  
 <div class="row">
   <div class="col-8 offset-2">
     <br />
     <h2>Create a New Listing!</h2>
-    <form method="post" action="/listings" class="needs-validation" novalidate>
+    <form method="post" action="/listings" enctype="multipart/form-data" class="needs-validation" novalidate>
       <div class="mb-3">
         <label for="title" class="form-label">Title</label>
         <input
@@ -15,6 +14,7 @@
           type="text"
           required
         />
+        <div class="valid-feedback">Title looks good</div>
       </div>
       <div class="mb-3">
         <label for="description" class="form-label">Description</label>
@@ -25,16 +25,17 @@
           type="text"
           required
         ></textarea>
+        <div class="invalid-feedback">Please enter short description</div>
       </div>
       <div class="mb-3">
-        <label for="image" class="form-label">Image Link</label>
+        <label for="image" class="form-label">Upload Image</label>
         <input
           name="listing[image]"
-          placeholder="Enter URL"
-          type="text"
+          type="file"
           class="form-control"
-          
+          required
         />
+        <div class="invalid-feedback">Enter image</div>
       </div>
 
       <div class="row">
@@ -43,10 +44,11 @@
           <input
             name="listing[price]"
             placeholder="12000"
-            type="number"
+            
             class="form-control"
             required
           />
+          <div class="invalid-feedback">Enter valid price!</div>
         </div>
 
         <div class="mb-3 col-md-8">
@@ -58,6 +60,7 @@
             type="text"
             required
           />
+          <div class="valid-feedback">Nice Country</div>
         </div>
       </div>
 
@@ -70,6 +73,7 @@
           type="text"
           required
         />
+        <div class="invalid-feedback">Enter Location</div>
       </div>
       <br />
       <button class="btn btn-dark add-btn">ADD</button><br /><br />
