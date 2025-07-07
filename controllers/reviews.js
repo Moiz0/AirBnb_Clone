@@ -5,7 +5,7 @@ module.exports.PostRoute = async (req, res) => {
   const listing = await Listing.findById(req.params.id);
   const newReview = new Review(req.body.review);
   newReview.author = req.user._id;
-  listing.reviews.push(newReview);
+  listing.review.push(newReview);
   await newReview.save();
   await listing.save();
   req.flash("success", "Review Created!");
@@ -14,7 +14,7 @@ module.exports.PostRoute = async (req, res) => {
 
 module.exports.DeleteRoute = async (req, res) => {
   let { id, reviewId } = req.params;
-  await Listing.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+  await Listing.findByIdAndUpdate(id, { $pull: { review: reviewId } });
   await Review.findByIdAndDelete(reviewId);
   req.flash("success", "Review Deleted!");
   res.redirect(`/listings/${id}`);

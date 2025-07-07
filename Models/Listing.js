@@ -13,7 +13,7 @@ const listingSchema = new Schema({
   price: Number,
   location: String,
   country: String,
-  reviews: [
+  review: [
     {
       type: Schema.Types.ObjectId,
       ref: "Review",
@@ -27,7 +27,7 @@ const listingSchema = new Schema({
 
 listingSchema.post("findOneAndDelete", async (listing) => {
   if (listing) {
-    await review.deleteMany({ _id: { $in: listing.reviews } });
+    await review.deleteMany({ _id: { $in: listing.review } });
   }
 });
 

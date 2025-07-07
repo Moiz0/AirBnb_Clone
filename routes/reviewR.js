@@ -13,7 +13,7 @@ const {
 router.post(
   "/",
   isLoggedin,
-  //validateReview,
+  validateReview,
   wrapAsync(ReviewController.PostRoute)
 );
 
@@ -22,7 +22,6 @@ router.delete(
   "/:reviewId",
   isLoggedin,
   isReviewAuthor,
-  //validateReview,
   wrapAsync(ReviewController.DeleteRoute)
 );
 

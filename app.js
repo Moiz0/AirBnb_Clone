@@ -1,101 +1,114 @@
+// Load environment variables from .env in non-production environments
 if (process.env.NODE_ENV != "production") {
   require("dotenv").config();
 }
+
+// Required modules
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const path = require("path");
-(ejsMate = require("ejs-mate")), app.engine("ejs", ejsMate);
-app.use(express.urlencoded({ extended: true }));
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
+const ejsMate = require("ejs-mate");
 const methodOverride = require("method-override");
-app.use(methodOverride("_method"));
-app.use(express.static(path.join(__dirname, "public")));
-const listingRouter = require("./routes/listing.js");
-const reviewRouter = require("./routes/reviewR.js");
-const UserRouter = require("./routes/user.js");
 const session = require("express-session");
 const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
-const User = require("./Models/user.js");
 const MongoStore = require("connect-mongo");
 
+// Import routes
+const listingRouter = require("./routes/listing.js");
+const reviewRouter = require("./routes/reviewR.js");
+const UserRouter = require("./routes/user.js");
+
+// Import User model for authentication
+const User = require("./Models/user.js");
+
+// Set up view engine with EJS and ejs-mate for layout support
+app.engine("ejs", ejsMate);
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+
+// Middleware
+app.use(express.urlencoded({ extended: true })); // To parse incoming form data
+app.use(methodOverride("_method"));              // To support PUT & DELETE from forms
+app.use(express.static(path.join(__dirname, "public"))); // Serve static files
+
+// MongoDB Atlas connection string from .env
 const dbUrl = process.env.ATLASDB_URL;
 
+// Configure session store using MongoDB
 const store = MongoStore.create({
   mongoUrl: dbUrl,
   crypto: {
     secret: process.env.SECRET,
   },
-  touchAfter: 24 * 3600,
+  touchAfter: 24 * 3600, // Session update interval in seconds
 });
 
-store.on("error", () => {
+// Handle session store errors
+store.on("error", (err) => {
   console.log("Error in mongo session", err);
 });
+
+// Session configuration
 const sessionOptions = {
   store,
-  secret: "mysecretcode", // implement session
+  secret: "mysecretcode", // Should be stored securely in .env
   resave: false,
   saveUninitialized: true,
   cookie: {
-    expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // implement cookie
+    expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days expiry
     maxAge: 7 * 24 * 60 * 60 * 1000,
-    httpOnly: true,
+    httpOnly: true, // Prevents client-side JS from accessing the cookie
   },
 };
 
-//bmoiz977   nppu7aVgcVZul6id
-//mongodb+srv://bmoiz977:<db_password>@cluster0.o3ei54n.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+// Use session and flash middleware
 app.use(session(sessionOptions));
-app.use(flash()); //implement it before routes
+app.use(flash());
 
+// Initialize Passport for authentication
 app.use(passport.initialize());
 app.use(passport.session());
-// use static authenticate method of model in LocalStrategy
+
+// Configure Passport to use local strategy with the User model
 passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
-// use static serialize and deserialize of model for passport session support
-// use static serialize and deserialize of model for passport session support
-passport.serializeUser(User.serializeUser()); // Correct way to serialize user with passport-local-mongoose
-passport.deserializeUser(User.deserializeUser()); // Correct way to deserialize user with passport-local-mongoose
-
+// Connect to MongoDB using async/await
+async function main() {
+  await mongoose.connect(dbUrl);
+}
 main()
   .then(() => {
     console.log("Connected to DB");
   })
   .catch((err) => {
-    console.log(err);
+    console.log("Error while connection to DB", err);
   });
 
-async function main() {
-  await mongoose.connect(dbUrl);
-}
-
-//create MW before routes
+// Middleware to make flash messages and user available in all views
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   res.locals.CurrentUser = req.user;
-  next(); //dont forget to call next()
+  next();
 });
 
-app.use("/listings", listingRouter); // routes
+// Use defined routers
+app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
 app.use("/", UserRouter);
 
+// Error handling middleware
 app.use((err, req, res, next) => {
   const { statuscode = 404, message = "Something went wrong!" } = err;
   res.render("listings/error.ejs", { message });
 });
 
-app.use((req, res, next) => {
-  res.locals.CurrentUser = req.user;
-  next();
-});
-
+// Start the server
 app.listen(8080, () => {
   console.log("Server is listening to 8080!");
 });
