@@ -31,7 +31,7 @@ app.set("views", path.join(__dirname, "views"));
 
 // Middleware
 app.use(express.urlencoded({ extended: true })); // To parse incoming form data
-app.use(methodOverride("_method"));              // To support PUT & DELETE from forms
+app.use(methodOverride("_method")); // To support PUT & DELETE from forms
 app.use(express.static(path.join(__dirname, "public"))); // Serve static files
 
 // MongoDB Atlas connection string from .env
@@ -112,3 +112,25 @@ app.use((err, req, res, next) => {
 app.listen(8080, () => {
   console.log("Server is listening to 8080!");
 });
+
+const helmet = require("helmet");
+
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: [],
+      connectSrc: ["'self'", "https://.cloudinary.com"],
+      scriptSrc: ["'self'", "https://cdn.jsdelivr.net", "'unsafe-inline'"],
+      styleSrc: ["'self'", "https://cdn.jsdelivr.net", "'unsafe-inline'"],
+      workerSrc: ["'self'", "blob:"],
+      objectSrc: [],
+      imgSrc: [
+        "'self'",
+        "blob:",
+        "data:",
+        "https://res.cloudinary.com", // if you're using Cloudinary
+      ],
+      fontSrc: ["'self'", "https://cdn.jsdelivr.net"],
+    },
+  })
+);
