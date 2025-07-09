@@ -80,7 +80,7 @@ main()
     if (process.env.NODE_ENV === "production") {
       app.set("trust proxy", 1);
     }
-    
+
     // Use session and flash middleware
     app.use(session(sessionOptions));
     app.use(flash());
