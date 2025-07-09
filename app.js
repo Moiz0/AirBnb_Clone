@@ -2,7 +2,6 @@
 if (process.env.NODE_ENV != "production") {
   require("dotenv").config();
 }
-
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -19,12 +18,9 @@ const reviewRouter = require("./routes/reviewR.js");
 const UserRouter = require("./routes/user.js");
 const User = require("./Models/user.js");
 const applySecurityMiddleware = require("./ErrorHandle/security.js"); // Assuming this is your helmet config
-
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
-
-// Middleware (these do NOT depend on DB connection, so they can be here)
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
@@ -33,7 +29,7 @@ app.use(express.static(path.join(__dirname, "public")));
 applySecurityMiddleware(app);
 
 const dbUrl = process.env.ATLASDB_URL;
-// Connect to MongoDB using async/await
+
 async function main() {
   await mongoose.connect(dbUrl);
 }
@@ -63,7 +59,7 @@ main()
     // Session configuration
     const sessionOptions = {
       store,
-      secret: process.env.SECRET || "mysecretcode",
+      secret: process.env.SECRET,
       resave: false,
       saveUninitialized: true,
       cookie: {
@@ -98,6 +94,10 @@ main()
     app.use("/listings", listingRouter);
     app.use("/listings/:id/reviews", reviewRouter);
     app.use("/", UserRouter);
+
+    app.get("/", (req, res) => {
+      res.redirect("/listings");
+    });
 
     // Error handling middleware
     app.use((err, req, res, next) => {
