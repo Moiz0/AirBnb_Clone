@@ -2,7 +2,7 @@
 if (process.env.NODE_ENV != "production") {
   require("dotenv").config();
 }
-// Required modules
+
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -14,19 +14,12 @@ const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const MongoStore = require("connect-mongo");
-
-// Import routes
 const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/reviewR.js");
 const UserRouter = require("./routes/user.js");
-
-// Import User model for authentication
 const User = require("./Models/user.js");
-
-// NEW: Import your security configuration
 const applySecurityMiddleware = require("./ErrorHandle/security.js");
 
-// Set up view engine with EJS and ejs-mate for layout support
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -42,7 +35,7 @@ applySecurityMiddleware(app);
 const dbUrl = process.env.dbUrl;
 // Configure session store using MongoDB
 const store = MongoStore.create({
-  mongoUrl: dbUrl,
+  clientPromise: mongoose.connection.getClient(), // Pass the MongoDB client from Mongoose
   crypto: {
     secret: process.env.SECRET,
   },
@@ -57,7 +50,7 @@ store.on("error", (err) => {
 // Session configuration
 const sessionOptions = {
   store,
-  secret: "mysecretcode", // Should be stored securely in .env
+  secret: process.env.SECRET || "mysecretcode", // Should be stored securely in .env
   resave: false,
   saveUninitialized: true,
   cookie: {
