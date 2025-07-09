@@ -1,44 +1,71 @@
-// config/security.js (or middleware/security.js)
-
 const helmet = require("helmet");
 
-module.exports = (app) => {
+function applySecurityMiddleware(app) {
+  // Enhanced Helmet configuration for production
   app.use(
-    helmet.contentSecurityPolicy({
-      directives: {
-        defaultSrc: ["'self'"],
-        connectSrc: ["'self'", "https://*.cloudinary.com"],
-        scriptSrc: [
-          "'self'",
-          "https://cdn.jsdelivr.net",
-          "'unsafe-inline'", // Use with caution
-        ],
-        styleSrc: [
-          "'self'",
-          "https://cdn.jsdelivr.net",
-          "'unsafe-inline'", // Use with caution
-          "https://cdnjs.cloudflare.com", // For Font Awesome CSS
-          "https://fonts.googleapis.com", // For Google Fonts CSS
-        ],
-        workerSrc: ["'self'", "blob:"],
-        objectSrc: ["'none'"],
-        imgSrc: [
-          "'self'",
-          "blob:",
-          "data:",
-          "https://res.cloudinary.com",
-          "https://images.unsplash.com",
-          "https://plus.unsplash.com", // For plus.unsplash.com images
-        ],
-        fontSrc: [
-          "'self'",
-          "https://cdn.jsdelivr.net", // If you load fonts from jsdelivr
-          "https://fonts.gstatic.com", // For Google Fonts font files
-          "https://cdnjs.cloudflare.com", // For Font Awesome font files
-        ],
-        // ... add any other directives you need
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          styleSrc: [
+            "'self'",
+            "'unsafe-inline'",
+            "https://stackpath.bootstrapcdn.com",
+            "https://cdn.jsdelivr.net",
+            "https://fonts.googleapis.com",
+          ],
+          scriptSrc: [
+            "'self'",
+            "https://stackpath.bootstrapcdn.com",
+            "https://cdn.jsdelivr.net",
+            "https://code.jquery.com",
+          ],
+          fontSrc: [
+            "'self'",
+            "https://fonts.gstatic.com",
+            "https://stackpath.bootstrapcdn.com",
+          ],
+          imgSrc: [
+            "'self'",
+            "data:",
+            "https://res.cloudinary.com",
+            "https://images.unsplash.com",
+          ],
+          connectSrc: ["'self'"],
+        },
+      },
+      crossOriginEmbedderPolicy: false, // Disable if causing issues
+      referrerPolicy: { policy: "same-origin" },
+      hsts: {
+        maxAge: 31536000,
+        includeSubDomains: true,
+        preload: true,
       },
     })
   );
-  // You can add other global security middlewares here too if you have any
-};
+
+  // Additional security headers
+  app.use((req, res, next) => {
+    // Prevent clickjacking
+    res.setHeader("X-Frame-Options", "DENY");
+
+    // Prevent MIME type sniffing
+    res.setHeader("X-Content-Type-Options", "nosniff");
+
+    // XSS Protection
+    res.setHeader("X-XSS-Protection", "1; mode=block");
+
+    // Referrer Policy
+    res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+
+    // Permissions Policy
+    res.setHeader(
+      "Permissions-Policy",
+      "geolocation=(), microphone=(), camera=()"
+    );
+
+    next();
+  });
+}
+
+module.exports = applySecurityMiddleware;

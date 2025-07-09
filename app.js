@@ -56,19 +56,31 @@ main()
       console.log("Error in mongo session", err);
     });
 
-    // Session configuration
+    // Secure session configuration
     const sessionOptions = {
       store,
-      secret: process.env.SECRET,
+      secret: process.env.SECRET || "mysecretcode",
       resave: false,
-      saveUninitialized: true,
+      saveUninitialized: false, // Changed to false for better security
+      name: "sessionId", // Change default session name
       cookie: {
         expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
+        secure: process.env.NODE_ENV === "production", // Only use secure cookies in production
+        sameSite: "strict", // Prevent CSRF attacks
       },
     };
 
+    // Use session and flash middleware
+    app.use(session(sessionOptions));
+    app.use(flash());
+
+    // Trust proxy settings for Render
+    if (process.env.NODE_ENV === "production") {
+      app.set("trust proxy", 1);
+    }
+    
     // Use session and flash middleware
     app.use(session(sessionOptions));
     app.use(flash());
