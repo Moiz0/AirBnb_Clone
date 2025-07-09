@@ -32,9 +32,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // Apply security middleware (this does not depend on DB connection)
 applySecurityMiddleware(app);
 
-// MongoDB Atlas connection string from .env
-const dbUrl = process.env.ATLASDB_URL; // <<< IMPORTANT: Make sure this is ATLASDB_URL as per your .env
-
+const dbUrl = process.env.ATLASDB_URL;
 // Connect to MongoDB using async/await
 async function main() {
   await mongoose.connect(dbUrl);
@@ -44,13 +42,8 @@ main()
   .then(() => {
     console.log("Connected to DB");
 
-    // >>>>>>> ALL CODE BELOW THIS LINE (THAT DEPENDS ON DB OR SESSIONS) MUST BE INSIDE THIS .THEN() BLOCK <<<<<<<
-
-    // Configure session store using MongoDB
-    // NOW mongoose.connection.getClient() will be available
     const store = MongoStore.create({
-      // Use client: mongoose.connection instead of clientPromise: mongoose.connection.getClient()
-      client: mongoose.connection, // <--- CHANGE THIS LINE
+      client: mongoose.connection.getClient(),
       crypto: {
         secret: process.env.SECRET,
       },
