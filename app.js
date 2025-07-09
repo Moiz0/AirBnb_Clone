@@ -49,11 +49,17 @@ main()
     // Configure session store using MongoDB
     // NOW mongoose.connection.getClient() will be available
     const store = MongoStore.create({
-      clientPromise: mongoose.connection.getClient(),
+      // Use client: mongoose.connection instead of clientPromise: mongoose.connection.getClient()
+      client: mongoose.connection, // <--- CHANGE THIS LINE
       crypto: {
-        secret: process.env.SECRET, // Use process.env.SECRET from your .env
+        secret: process.env.SECRET,
       },
       touchAfter: 24 * 3600,
+    });
+
+    // Handle session store errors
+    store.on("error", (err) => {
+      console.log("Error in mongo session", err);
     });
 
     // Handle session store errors
