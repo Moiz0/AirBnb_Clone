@@ -2,8 +2,6 @@
 if (process.env.NODE_ENV != "production") {
   require("dotenv").config();
 }
-
-const helmet = require("helmet");
 // Required modules
 const express = require("express");
 const app = express();
@@ -25,6 +23,9 @@ const UserRouter = require("./routes/user.js");
 // Import User model for authentication
 const User = require("./Models/user.js");
 
+// NEW: Import your security configuration
+const applySecurityMiddleware = require("./ErrorHandle/security.js");
+
 // Set up view engine with EJS and ejs-mate for layout support
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
@@ -35,36 +36,10 @@ app.use(express.urlencoded({ extended: true })); // To parse incoming form data
 app.use(methodOverride("_method")); // To support PUT & DELETE from forms
 app.use(express.static(path.join(__dirname, "public"))); // Serve static files
 
-app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: ["'self'"], // Change this from [] to ["'self'"]
-      connectSrc: ["'self'", "https://*.cloudinary.com"], // Corrected wildcard for cloudinary
-      scriptSrc: ["'self'", "https://cdn.jsdelivr.net", "'unsafe-inline'"],
-      styleSrc: ["'self'", "https://cdn.jsdelivr.net", "'unsafe-inline'"],
-      workerSrc: ["'self'", "blob:"],
-      objectSrc: ["'none'"], // Assuming you don't use <object> tags for plugins
-      imgSrc: [
-        "'self'",
-        "blob:",
-        "data:",
-        "https://res.cloudinary.com",
-        "https://images.unsplash.com", // Add if you use unsplash images directly
-        // Add any other image sources here
-      ],
-      fontSrc: [
-        "'self'",
-        "https://cdn.jsdelivr.net",
-        "https://fonts.gstatic.com",
-      ], // Add fonts.gstatic.com if using Google Fonts
-      // Consider adding 'frameSrc' if you embed iframes, otherwise default to 'none' or leave out
-      // You might also need 'manifest-src' if using a web app manifest
-    },
-  })
-);
-// MongoDB Atlas connection string from .env
-const dbUrl = process.env.ATLASDB_URL;
+applySecurityMiddleware(app);
 
+// MongoDB Atlas connection string from .env
+const dbUrl = process.env.dbUrl;
 // Configure session store using MongoDB
 const store = MongoStore.create({
   mongoUrl: dbUrl,
