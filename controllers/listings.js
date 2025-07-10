@@ -1,8 +1,9 @@
 const Listing = require("../Models/Listing");
+const review = require("../Models/review");
 
 module.exports.index = async (req, res) => {
-  const allListing = await Listing.find({});
-  res.render("listings/index.ejs", { allListing });
+  const listings = await Listing.find({});
+  res.render("listings/index.ejs", { listings });
 };
 
 module.exports.NewRoute = (req, res) => {
@@ -19,7 +20,7 @@ module.exports.ShowRoute = async (req, res) => {
     return res.redirect("/listings");
   }
   //console.log(listing);
-  res.render("listings/show.ejs", { listing, currUser: req.user });
+  res.render("listings/show.ejs", { listing, review, currUser: req.user });
 };
 
 module.exports.createRoute = async (req, res) => {
@@ -67,4 +68,33 @@ module.exports.DeleteRoute = async (req, res) => {
   let DListings = await Listing.findByIdAndDelete(id);
   req.flash("success", "List Deleted!");
   res.redirect("/listings");
+};
+
+module.exports.Search = async (req, res) => {
+  const { q } = req.query;
+
+  if (!q) {
+    req.flash("error", "Please enter a search query!");
+    return res.redirect("/listings");
+  }
+
+  const SearchQ = {
+    $or: [
+      { title: { $regex: q, $options: "i" } },
+      { location: { $regex: q, $options: "i" } },
+      { country: { $regex: q, $options: "i" } },
+    ],
+  };
+
+  try {
+    const listings = await Listing.find(SearchQ); // Result is 'listings'
+    res.render("listings/index.ejs", { listings, q }); // Pass 'listings'
+  } catch (err) {
+    console.log("search err", err);
+    req.flash("error", "An error occurred during search.");
+    res.render("listings/index.ejs", {
+      listings: [],
+      error: req.flash("error"),
+    });
+  }
 };

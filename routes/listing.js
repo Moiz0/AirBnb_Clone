@@ -1,11 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const wrapAsync = require("../ErrorHandle/wrapAsync.js");
-const { isLoggedin, isOwner, validateListing } = require("../middleware.js");
+const { isLoggedin, isOwner } = require("../middleware.js");
 const ListingController = require("../controllers/listings.js");
 const multer = require("multer");
 const { storage } = require("../cloudConfig.js");
 const upload = multer({ storage });
+
+router.get("/search", wrapAsync(ListingController.Search));
 
 router
   .route("/")

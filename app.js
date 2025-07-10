@@ -17,38 +17,29 @@ const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/reviewR.js");
 const UserRouter = require("./routes/user.js");
 const User = require("./Models/user.js");
-const applySecurityMiddleware = require("./ErrorHandle/security.js"); // Assuming this is your helmet config
+const applySecurityMiddleware = require("./ErrorHandle/security.js");
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
-
-// Apply security middleware (this does not depend on DB connection)
 applySecurityMiddleware(app);
 
-const dbUrl = process.env.ATLASDB_URL;
+const DB_URL = process.env.ATLASDB_URL;
 
 async function main() {
-  await mongoose.connect(dbUrl);
+  await mongoose.connect(DB_URL);
 }
 
 main()
   .then(() => {
-    console.log("Connected to DB");
-
     const store = MongoStore.create({
       client: mongoose.connection.getClient(),
       crypto: {
         secret: process.env.SECRET,
       },
       touchAfter: 24 * 3600,
-    });
-
-    // Handle session store errors
-    store.on("error", (err) => {
-      console.log("Error in mongo session", err);
     });
 
     // Handle session store errors
@@ -121,6 +112,7 @@ main()
     const port = process.env.PORT || 8080; // Use process.env.PORT for Render
     app.listen(port, () => {
       console.log(`Server is listening on port ${port}!`);
+      console.log("Connected to DB");
     });
   }) // End of .then() block
   .catch((err) => {

@@ -1,43 +1,7 @@
-<style>
-  .search-btn {
-    background-color: red;
-    color: white;
-    border-radius: 25px;
-    padding: 0 1rem 0 1rem;
-  }
-
-  .search-btn:hover {
-    background-color: red;
-    color: white;
-  }
-  .search-btn i {
-    display: inline;
-    margin-right: 0.5rem;
-  }
-  .search-inp {
-    border-radius: 25px;
-    padding: 0.5 3rem 0.5 3rem;
-  }
-
-
-  .filterx {
-  display: flex;
-  align-items: center;
-  color: red;
-  font-size: 25px;
-}
-
-.filterx i {
-  margin-right: 10px;
-}
-
-.filterx p {
-  margin: 0;
-}
-
+<head>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
      
-</style>
-
 <nav
   class="navbar navbar-expand-md navbar-light bg-white border-bottom sticky-top">
   <div class="container-fluid">
@@ -48,7 +12,7 @@
   <p>airbnb</p>
 </div>
 
-      
+
     <button
       class="navbar-toggler"
       type="button"
@@ -63,10 +27,11 @@
       <div class="navbar-nav ms-auto">
         <div>
           <div class="container-fluid">
-            <form class="d-flex" role="search">
+            <form class="d-flex" role="search" action="/listings/search" method="get">
               <input
                 class="form-control me-2 search-inp"
                 type="search"
+                name="q"
                 placeholder="Search"
                 aria-label="Search"
               />
@@ -78,7 +43,7 @@
         </div>
       </div>
       <div class="navbar-nav ms-auto">
-        <a class="nav-link" href="/listings/new">Airbnb your home</a>
+        <a class="nav-link" href="/listings/new">Add Post</a>
         <% if(!CurrentUser) { %>
         <a class="nav-link" href="/signup"><b>SignUp</b></a>
         <a class="nav-link" href="/login"><b>Login</b></a>

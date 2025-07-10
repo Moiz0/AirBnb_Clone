@@ -53,7 +53,7 @@
     >
       <div class="mt-3 mb-3">
         <div class="mt-3 mb-3">
-          <label for="Rating" class="form-label">Rating</label><br/>
+          <label for="Rating" class="form-label">Rating</label><br />
           <fieldset class="starability-slot">
             <input
               type="radio"
@@ -101,7 +101,7 @@
           </fieldset>
         </div>
 
-        <label>Comments</label><br/>
+        <label>Comments</label><br />
         <textarea
           name="review[Comment]"
           id="Comment"
@@ -131,6 +131,8 @@
           ></p>
           <p class="card-text"><%= rev.Comment %></p>
         </div>
+        <% if( currUser && rev.author && rev.author._id.equals(currUser._id) )
+        {%>
         <form
           class="mb-3 mt-2"
           method="post"
@@ -138,6 +140,7 @@
         >
           <button class="btn btn-dark btn-sm">Delete</button>
         </form>
+        <%}%>
       </div>
       <% } %>
     </div>
