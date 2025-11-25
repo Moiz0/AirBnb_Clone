@@ -19,13 +19,6 @@
 This is a full-stack web application built with **Node.js** and **Express.js** that mimics Airbnb's core functionality. Users can create, view, edit, and delete property listings, as well as leave reviews for properties. The application includes complete user authentication, authorization, and file upload capabilities, providing a robust platform for managing rental properties.
 
 ---
-
-## ✨ Live Demo & Repository
-
-* **Live Demo:** [**Add Your Live Demo URL Here**](YOUR_LIVE_DEMO_URL_HERE) 
-* **GitHub Repository:** [https://github.com/Moiz0/airbnb-clone](https://github.com/Moiz0/airbnb-clone) (Update this if your repo name is different)
-
----
 ## ⚙️ Setup & Installation
 
 Follow these steps to get a development copy of the project running on your local machine.
