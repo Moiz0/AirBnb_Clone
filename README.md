@@ -19,7 +19,37 @@
 This is a full-stack web application built with **Node.js** and **Express.js** that mimics Airbnb's core functionality. Users can create, view, edit, and delete property listings, as well as leave reviews for properties. The application includes complete user authentication, authorization, and file upload capabilities, providing a robust platform for managing rental properties.
 
 ---
-## ⚙️ Setup & Installation
+
+## 🛠️ Tech Stack
+
+* **Backend:** Node.js, Express.js
+* **Database:** MongoDB (via MongoDB Atlas) with Mongoose ODM
+* **Authentication:** Passport.js (Local Strategy)
+* **File Upload:** Multer, Cloudinary
+* **Templating:** EJS, EJS-Mate
+* **Validation:** Joi
+* **Session Management:** Express-session, Connect-Mongo
+* **Styling:** Bootstrap, Custom CSS
+* **Development Tools:** Git, GitHub
+
+---
+## 🚀 Key Features
+
+* **User Authentication:** Secure local strategy with Passport.js, session management, automatic login after registration, and secure password hashing.
+* **Authorization:** Role-based access control with `isLoggedIn`, `isOwner`, and `isReviewAuthor` middleware to protect routes and ensure data integrity.
+* **CRUD Operations:** Full Create, Read, Update, and Delete functionality for property listings and reviews.
+* **File Uploads:** Integrated Multer for handling image uploads, with Cloudinary for cloud storage and image transformation.
+* **Data Validation:** Robust server-side validation using Joi schemas to ensure data consistency and integrity.
+* **Error Handling:** Custom error classes (`ExpressError`), an async error wrapper (`wrapAsync`), and a global error handler for comprehensive error management and user-friendly error pages.
+* **Flash Messages:** Session-based success/error notifications with Bootstrap styling for improved user feedback.
+* **Database Relationships:** Implemented one-to-many relationships (User to Listings, Listing to Reviews) with efficient Mongoose population and cascade deletion of associated data.
+* **Search Functionality:** Allows users to search listings by location, country, or title.
+* **Responsive Design:** Mobile-friendly interface with Bootstrap styling and responsive image handling.
+* **Security:** Utilizes HTTP-only cookies, session expiration, and method override for basic CSRF protection.
+
+---
+
+ ## ⚙️ Setup & Installation
 
 Follow these steps to get a development copy of the project running on your local machine.
 
@@ -62,44 +92,10 @@ Follow these steps to get a development copy of the project running on your loca
     ```
     The application should now be running on `http://localhost:4000` (or the port specified in your `.env` file).
 
-
-
----
-
-## 🛠️ Tech Stack
-
-* **Backend:** Node.js, Express.js
-* **Database:** MongoDB (via MongoDB Atlas) with Mongoose ODM
-* **Authentication:** Passport.js (Local Strategy)
-* **File Upload:** Multer, Cloudinary
-* **Templating:** EJS, EJS-Mate
-* **Validation:** Joi
-* **Session Management:** Express-session, Connect-Mongo
-* **Styling:** Bootstrap, Custom CSS
-* **Development Tools:** Git, GitHub
-
----
-## 🚀 Key Features
-
-* **User Authentication:** Secure local strategy with Passport.js, session management, automatic login after registration, and secure password hashing.
-* **Authorization:** Role-based access control with `isLoggedIn`, `isOwner`, and `isReviewAuthor` middleware to protect routes and ensure data integrity.
-* **CRUD Operations:** Full Create, Read, Update, and Delete functionality for property listings and reviews.
-* **File Uploads:** Integrated Multer for handling image uploads, with Cloudinary for cloud storage and image transformation.
-* **Data Validation:** Robust server-side validation using Joi schemas to ensure data consistency and integrity.
-* **Error Handling:** Custom error classes (`ExpressError`), an async error wrapper (`wrapAsync`), and a global error handler for comprehensive error management and user-friendly error pages.
-* **Flash Messages:** Session-based success/error notifications with Bootstrap styling for improved user feedback.
-* **Database Relationships:** Implemented one-to-many relationships (User to Listings, Listing to Reviews) with efficient Mongoose population and cascade deletion of associated data.
-* **Search Functionality:** Allows users to search listings by location, country, or title.
-* **Responsive Design:** Mobile-friendly interface with Bootstrap styling and responsive image handling.
-* **Security:** Utilizes HTTP-only cookies, session expiration, and method override for basic CSRF protection.
-
-
-
-## 📁 Architecture & File Structure
   
 
 
-
+---
 
 ### Prerequisites
 
